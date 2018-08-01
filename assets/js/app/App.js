@@ -1,15 +1,17 @@
-import React, { Component} from 'react'
-import ReactDOM from 'react-dom'
-import DatePicker from 'react-datepicker'
+import React, { Component} from 'react';
+import ReactDOM from 'react-dom';
+import DatePicker from 'react-datepicker';
 import moment from 'moment'
 import Home from './Home';
 import Results from './Results';
+import axios from 'axios';
 
 class Layout extends Component {
 
   state = {
       location: 'home',
-      startDate: moment()
+      startDate: moment(),
+      data:''
     }
 
     routingSystem = () => {
@@ -30,7 +32,26 @@ class Layout extends Component {
     handleDateChange = (date) => {
       this.setState({
         startDate: date
-      })
+      }, () => console.log(this.state.startDate.unix()));
+    }
+
+    apiCall = () => {
+      //
+
+      let self = this;
+
+      axios.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=1533182706&extraParams=cryptoconverter_js')
+        .then(function (response){
+          self.setState({
+            data: response.data.BTC
+          }, () => {
+            console.log(self.state)
+          })
+        }) 
+        .catch(function(error){
+          console.log(error)
+        });
+          
     }
 
   
@@ -40,7 +61,7 @@ class Layout extends Component {
         <div className='home'>
           <div className="container">
             <header>
-              <div className="logo">
+              <div className="logo" onClick={this.apiCall}>
                 Crypto Converter
               </div>
               <nav className="menu">

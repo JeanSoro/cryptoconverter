@@ -1,6 +1,6 @@
 webpackJsonp([0],{
 
-/***/ 222:
+/***/ 230:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12,15 +12,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(10);
+var _react = __webpack_require__(11);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(19);
+var _reactDom = __webpack_require__(20);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactDatepicker = __webpack_require__(57);
+var _reactDatepicker = __webpack_require__(59);
 
 var _reactDatepicker2 = _interopRequireDefault(_reactDatepicker);
 
@@ -111,7 +111,7 @@ exports.default = Home;
 
 /***/ }),
 
-/***/ 223:
+/***/ 231:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -123,11 +123,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(10);
+var _react = __webpack_require__(11);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(19);
+var _reactDom = __webpack_require__(20);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
@@ -213,7 +213,7 @@ exports.default = Results;
 
 /***/ }),
 
-/***/ 225:
+/***/ 250:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -221,15 +221,15 @@ exports.default = Results;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(10);
+var _react = __webpack_require__(11);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(19);
+var _reactDom = __webpack_require__(20);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactDatepicker = __webpack_require__(57);
+var _reactDatepicker = __webpack_require__(59);
 
 var _reactDatepicker2 = _interopRequireDefault(_reactDatepicker);
 
@@ -237,13 +237,17 @@ var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _Home = __webpack_require__(222);
+var _Home = __webpack_require__(230);
 
 var _Home2 = _interopRequireDefault(_Home);
 
-var _Results = __webpack_require__(223);
+var _Results = __webpack_require__(231);
 
 var _Results2 = _interopRequireDefault(_Results);
+
+var _axios = __webpack_require__(229);
+
+var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -269,7 +273,8 @@ var Layout = function (_Component) {
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Layout.__proto__ || Object.getPrototypeOf(Layout)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
       location: 'home',
-      startDate: (0, _moment2.default)()
+      startDate: (0, _moment2.default)(),
+      data: ''
     }, _this.routingSystem = function () {
 
       switch (_this.state.location) {
@@ -286,6 +291,22 @@ var Layout = function (_Component) {
     }, _this.handleDateChange = function (date) {
       _this.setState({
         startDate: date
+      }, function () {
+        return console.log(_this.state.startDate.unix());
+      });
+    }, _this.apiCall = function () {
+      //
+
+      var self = _this;
+
+      _axios2.default.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=1533182706&extraParams=cryptoconverter_js').then(function (response) {
+        self.setState({
+          data: response.data.BTC
+        }, function () {
+          console.log(self.state);
+        });
+      }).catch(function (error) {
+        console.log(error);
       });
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -304,7 +325,7 @@ var Layout = function (_Component) {
             null,
             _react2.default.createElement(
               'div',
-              { className: 'logo' },
+              { className: 'logo', onClick: this.apiCall },
               'Crypto Converter'
             ),
             _react2.default.createElement(
@@ -332,4 +353,4 @@ _reactDom2.default.render(_react2.default.createElement(Layout, null), app);
 
 /***/ })
 
-},[225]);
+},[250]);

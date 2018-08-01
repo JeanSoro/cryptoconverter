@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
 
-
-export default class Home extends Component {
+class Home extends Component {
 
   state = {
       name: ''
@@ -39,6 +38,8 @@ export default class Home extends Component {
       )
   }
 }
+
+export default Home
 
 
 
