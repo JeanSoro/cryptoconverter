@@ -30,6 +30,17 @@
 
     }
 
+    
+
+    .react-datepicker__input-container,
+    .react-datepicker-wrapper {
+        width: 100%;
+
+        input {
+            width: 100%
+        }
+    }
+
     input[type="text"] {
         background: transparent;
         color: #fff;

@@ -2,8 +2,10 @@
 @import "reset";
 @import "variables";
 @import "grid";
+@import "datepicker";
 @import "home";
 @import "results";
+
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -24,19 +26,31 @@ header {
     display: inline-block;
     float: right;
     color: #fff;
+
       a {
-        color: #fff;
-        text-decoration: none;
-        display: inline-block;
-        padding: 10px 20px;
-        border: 1px solid #304ffe;
-        border-radius: 3px;
-        transition: all .3s ease-in-out;
-        &:hover {
-          background: yellow;
-        }
+        
       }
   }
+}
+
+.main-btn {
+
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid #304ffe;
+  border-radius: 3px;
+  transition: all .3s ease-in-out;
+        
+    &:hover {
+      background: yellow;
+    }
+
+    &.active {
+      background: yellow;
+    }
+
 }
 
 

@@ -1,12 +1,38 @@
 import React, { Component} from 'react'
 import ReactDOM from 'react-dom'
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
 import Home from './Home';
+import Results from './Results';
 
 class Layout extends Component {
 
   state = {
-      name: ''
+      location: 'home',
+      startDate: moment()
     }
+
+    routingSystem = () => {
+
+      switch(this.state.location) {
+        case 'home':
+          return <Home handleDateChange={this.handleDateChange} globalState={this.state}/>
+          break;
+        case 'results':
+          return <Results/>
+          break;
+        default:
+          return <Home/>
+           
+      }
+    }
+
+    handleDateChange = (date) => {
+      this.setState({
+        startDate: date
+      })
+    }
+
   
  
   render () {
@@ -18,10 +44,10 @@ class Layout extends Component {
                 Crypto Converter
               </div>
               <nav className="menu">
-                <a href="#">Register</a>
+                <a href="#" className="main-btn">Register</a>
               </nav>
             </header>
-            <Home/>
+            {this.routingSystem()}
 
           </div>
          
