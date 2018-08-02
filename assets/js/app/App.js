@@ -15,13 +15,16 @@ class Layout extends Component {
       location: 'home',
       startDate: moment(),
       data:'',
-      cryptoAmount: 1
+      cryptoAmount: 1,
+      status: '',
+      totalStatus: ''
     }
 
     this.routingSystem = this.routingSystem.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
-    this.apiCall = this.apiCall.bind(this)
+    this.checkProfits = this.checkProfits.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
+    this.landingPage = this.landingPage.bind(this)
   }
   
 
@@ -46,17 +49,14 @@ class Layout extends Component {
   }
 
 
-      
-
-
     routingSystem() {
 
       switch(this.state.location) {
         case 'home':
-          return <Home handleDateChange={this.handleDateChange} globalState={this.state} onInputChange={this.onInputChange} apiCall={this.apiCall}/>
+          return <Home handleDateChange={this.handleDateChange} globalState={this.state} onInputChange={this.onInputChange} checkProfits={this.checkProfits}/>
           break;
         case 'results':
-          return <Results/>
+          return <Results globalState={this.state} landingPage={this.landingPage}/>
           break;
         default:
           return <Home/>
@@ -79,7 +79,7 @@ class Layout extends Component {
 
     
 
-    apiCall() {
+    checkProfits() {
       
       let self= this;
 
@@ -102,28 +102,67 @@ class Layout extends Component {
 
             if(newCP < newSP){
 
-              let gain = newSP - newCP
-              let gainPercentage = (gain / newCP) * 100
-              gainPercentage = gainPercentage.toFixed(2)
-              console.log(`profit percent is ${gainPercentage}`)
-            }else {
+                let gain = newSP - newCP
+                let gainPercentage = (gain / newCP) * 100
+                gainPercentage = gainPercentage.toFixed(2)
 
-              let loss = newCP - newSP;
-              let lossPercentage = ( loss / newCP ) * 100;
-              lossPercentage = lossPercentage.toFixed(2)
-              console.log(`loss percent is ${lossPercentage}`)
+                self.setState({
+                  location: 'results',
+                  status: 'gain',
+                  totalStatus: {
+                    newCP: newCP.toFixed(2),
+                    costPrice,
+                    newSP: newSP.toFixed(2),
+                    sellingPrice,
+                    percentage: gainPercentage
+                  }
+              })
+
+            } else {
+
+                let loss = newCP - newSP;
+                let lossPercentage = ( loss / newCP ) * 100;
+                lossPercentage = lossPercentage.toFixed(2)
+              
+
+                self.setState({
+                  location: 'results',
+                  status: 'loss',
+                  totalStatus: {
+                      newCP: newCP.toFixed(2),
+                      costPrice,
+                      newSP: newSP.toFixed(2),
+                      sellingPrice,
+                      percentage: lossPercentage
+                  }
+                })
+
             }
 
-            console.log(self.state)
+            self.setState({
+              location: 'results'
+            })
+
           })
         })
         .catch(function(error) {
           console.log(error)
         })
-
-
-          
+     
   }
+
+  landingPage(){
+      this.setState({
+        location: 'home',
+        startDate: moment(),
+        data:'',
+        cryptoAmount: 1,
+        status: '',
+        totalStatus: ''
+      })
+
+  }
+
 
   
  
@@ -132,7 +171,7 @@ class Layout extends Component {
         <div className='home'>
           <div className="container">
             <header>
-              <div className="logo" onClick={this.apiCall}>
+              <div className="logo" onClick={this.checkProfits}>
                 Crypto Converter
               </div>
               <nav className="menu">

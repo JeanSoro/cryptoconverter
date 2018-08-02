@@ -30,7 +30,7 @@ class Home extends Component {
 
               />
 
-              <button type="submit" onClick={this.props.apiCall}>check profits</button>
+              <button type="submit" onClick={this.props.checkProfits}>check profits</button>
             </div>
           </div>
          

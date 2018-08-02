@@ -95,7 +95,7 @@ var Home = function (_Component) {
             }),
             _react2.default.createElement(
               'button',
-              { type: 'submit', onClick: this.props.apiCall },
+              { type: 'submit', onClick: this.props.checkProfits },
               'check profits'
             )
           )
@@ -143,24 +143,38 @@ var Results = function (_Component) {
   _inherits(Results, _Component);
 
   function Results() {
-    var _ref;
-
-    var _temp, _this, _ret;
-
     _classCallCheck(this, Results);
 
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    var _this = _possibleConstructorReturn(this, (Results.__proto__ || Object.getPrototypeOf(Results)).call(this));
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Results.__proto__ || Object.getPrototypeOf(Results)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+    _this.state = {
       name: ''
-    }, _temp), _possibleConstructorReturn(_this, _ret);
+    };
+
+    _this.checkGains = _this.checkGains.bind(_this);
+    return _this;
   }
 
   _createClass(Results, [{
+    key: 'checkGains',
+    value: function checkGains() {
+      var percentage = this.props.globalState.totalStatus.percentage;
+
+
+      if (this.props.globalState.status == 'gain') {
+        return 'You made ' + percentage + '% profit';
+      } else {
+        return 'You made a lost of ' + percentage + '% off your current investment';
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _props$globalState$to = this.props.globalState.totalStatus,
+          percentage = _props$globalState$to.percentage,
+          newCP = _props$globalState$to.newCP,
+          newSP = _props$globalState$to.newSP;
+
       return _react2.default.createElement(
         'section',
         { id: 'results' },
@@ -178,22 +192,30 @@ var Results = function (_Component) {
             _react2.default.createElement(
               'h3',
               null,
-              'Your $1200 dollar investment is now'
+              'Your ',
+              newCP,
+              ' dollar investment is now'
             ),
             _react2.default.createElement(
               'h1',
               null,
-              '$7500'
+              '$',
+              newSP
             ),
             _react2.default.createElement(
               'h4',
               null,
-              'You made 400% profit'
+              this.checkGains()
             ),
             _react2.default.createElement(
               'a',
               { href: '#', className: 'main-btn active' },
-              'Create an Account to keep track of all your records'
+              'Create Account to keep track of your records'
+            ),
+            _react2.default.createElement(
+              'a',
+              { href: '#', className: 'main-btn active', onClick: this.props.landingPage },
+              'Check another transaction'
             )
           ),
           _react2.default.createElement(
@@ -269,13 +291,16 @@ var Layout = function (_Component) {
       location: 'home',
       startDate: (0, _moment2.default)(),
       data: '',
-      cryptoAmount: 1
+      cryptoAmount: 1,
+      status: '',
+      totalStatus: ''
     };
 
     _this.routingSystem = _this.routingSystem.bind(_this);
     _this.handleDateChange = _this.handleDateChange.bind(_this);
-    _this.apiCall = _this.apiCall.bind(_this);
+    _this.checkProfits = _this.checkProfits.bind(_this);
     _this.onInputChange = _this.onInputChange.bind(_this);
+    _this.landingPage = _this.landingPage.bind(_this);
     return _this;
   }
 
@@ -302,10 +327,10 @@ var Layout = function (_Component) {
 
       switch (this.state.location) {
         case 'home':
-          return _react2.default.createElement(_Home2.default, { handleDateChange: this.handleDateChange, globalState: this.state, onInputChange: this.onInputChange, apiCall: this.apiCall });
+          return _react2.default.createElement(_Home2.default, { handleDateChange: this.handleDateChange, globalState: this.state, onInputChange: this.onInputChange, checkProfits: this.checkProfits });
           break;
         case 'results':
-          return _react2.default.createElement(_Results2.default, null);
+          return _react2.default.createElement(_Results2.default, { globalState: this.state, landingPage: this.landingPage });
           break;
         default:
           return _react2.default.createElement(_Home2.default, null);
@@ -331,8 +356,8 @@ var Layout = function (_Component) {
       });
     }
   }, {
-    key: 'apiCall',
-    value: function apiCall() {
+    key: 'checkProfits',
+    value: function checkProfits() {
 
       var self = this;
 
@@ -356,19 +381,55 @@ var Layout = function (_Component) {
             var gain = newSP - newCP;
             var gainPercentage = gain / newCP * 100;
             gainPercentage = gainPercentage.toFixed(2);
-            console.log('profit percent is ' + gainPercentage);
+
+            self.setState({
+              location: 'results',
+              status: 'gain',
+              totalStatus: {
+                newCP: newCP.toFixed(2),
+                costPrice: costPrice,
+                newSP: newSP.toFixed(2),
+                sellingPrice: sellingPrice,
+                percentage: gainPercentage
+              }
+            });
           } else {
 
             var loss = newCP - newSP;
             var lossPercentage = loss / newCP * 100;
             lossPercentage = lossPercentage.toFixed(2);
-            console.log('loss percent is ' + lossPercentage);
+
+            self.setState({
+              location: 'results',
+              status: 'loss',
+              totalStatus: {
+                newCP: newCP.toFixed(2),
+                costPrice: costPrice,
+                newSP: newSP.toFixed(2),
+                sellingPrice: sellingPrice,
+                percentage: lossPercentage
+              }
+            });
           }
 
-          console.log(self.state);
+          self.setState({
+            location: 'results'
+          });
         });
       }).catch(function (error) {
         console.log(error);
+      });
+    }
+  }, {
+    key: 'landingPage',
+    value: function landingPage() {
+      this.setState({
+        location: 'home',
+        startDate: (0, _moment2.default)(),
+        data: '',
+        cryptoAmount: 1,
+        status: '',
+        totalStatus: ''
       });
     }
   }, {
@@ -385,7 +446,7 @@ var Layout = function (_Component) {
             null,
             _react2.default.createElement(
               'div',
-              { className: 'logo', onClick: this.apiCall },
+              { className: 'logo', onClick: this.checkProfits },
               'Crypto Converter'
             ),
             _react2.default.createElement(
