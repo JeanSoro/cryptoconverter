@@ -2,23 +2,58 @@ import React, { Component} from 'react';
 import ReactDOM from 'react-dom';
 import DatePicker from 'react-datepicker';
 import moment from 'moment'
+import axios from 'axios';
 import Home from './Home';
 import Results from './Results';
-import axios from 'axios';
+
 
 class Layout extends Component {
 
-  state = {
+  constructor(){
+    super()
+    this.state = {
       location: 'home',
       startDate: moment(),
-      data:''
+      data:'',
+      cryptoAmount: 1
     }
 
-    routingSystem = () => {
+    this.routingSystem = this.routingSystem.bind(this)
+    this.handleDateChange = this.handleDateChange.bind(this)
+    this.apiCall = this.apiCall.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
+  }
+  
+
+
+    componentWillMount(){
+
+      let self= this
+
+      axios.get(`https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=${moment().unix()}&extraParams=cryptoconverter_js`)
+      .then(function (response){
+        
+        self.setState({
+          btcToday: response.data.BTC
+        }, () => {
+          console.log(self.state)
+        })
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
+        
+  }
+
+
+      
+
+
+    routingSystem() {
 
       switch(this.state.location) {
         case 'home':
-          return <Home handleDateChange={this.handleDateChange} globalState={this.state}/>
+          return <Home handleDateChange={this.handleDateChange} globalState={this.state} onInputChange={this.onInputChange} apiCall={this.apiCall}/>
           break;
         case 'results':
           return <Results/>
@@ -29,30 +64,66 @@ class Layout extends Component {
       }
     }
 
-    handleDateChange = (date) => {
+    handleDateChange(date) {
       this.setState({
         startDate: date
       }, () => console.log(this.state.startDate.unix()));
     }
 
-    apiCall = () => {
-      //
+    onInputChange (e) {
+      this.setState({
+        cryptoAmount: e.target.value
+      })
+    }
 
-      let self = this;
 
-      axios.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=1533182706&extraParams=cryptoconverter_js')
+    
+
+    apiCall() {
+      
+      let self= this;
+
+      axios.get(`https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=${self.state.startDate.unix()}&extraParams=cryptoconverter_js`)
         .then(function (response){
+        
           self.setState({
             data: response.data.BTC
           }, () => {
+
+
+            const costPrice = self.state.data.USD
+            
+            let newCP = self.state.cryptoAmount * 100
+
+            newCP = (newCP * costPrice) / 100
+            const sellingPrice = self.state.btcToday.USD
+            let newSP = (self.state.cryptoAmount * 100)
+            newSP = (newSP * sellingPrice) / 100
+
+            if(newCP < newSP){
+
+              let gain = newSP - newCP
+              let gainPercentage = (gain / newCP) * 100
+              gainPercentage = gainPercentage.toFixed(2)
+              console.log(`profit percent is ${gainPercentage}`)
+            }else {
+
+              let loss = newCP - newSP;
+              let lossPercentage = ( loss / newCP ) * 100;
+              lossPercentage = lossPercentage.toFixed(2)
+              console.log(`loss percent is ${lossPercentage}`)
+            }
+
             console.log(self.state)
           })
-        }) 
-        .catch(function(error){
+        })
+        .catch(function(error) {
           console.log(error)
-        });
+        })
+
+
           
-    }
+  }
 
   
  

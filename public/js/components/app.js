@@ -82,7 +82,7 @@ var Home = function (_Component) {
               null,
               'Crypto Amount'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'amount' }),
+            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.props.onInputChange, value: this.props.globalState.cryptoAmount }),
             _react2.default.createElement(
               'label',
               null,
@@ -95,7 +95,7 @@ var Home = function (_Component) {
             }),
             _react2.default.createElement(
               'button',
-              { type: 'submit' },
+              { type: 'submit', onClick: this.props.apiCall },
               'check profits'
             )
           )
@@ -237,6 +237,10 @@ var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _axios = __webpack_require__(229);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _Home = __webpack_require__(230);
 
 var _Home2 = _interopRequireDefault(_Home);
@@ -244,10 +248,6 @@ var _Home2 = _interopRequireDefault(_Home);
 var _Results = __webpack_require__(231);
 
 var _Results2 = _interopRequireDefault(_Results);
-
-var _axios = __webpack_require__(229);
-
-var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -261,25 +261,48 @@ var Layout = function (_Component) {
   _inherits(Layout, _Component);
 
   function Layout() {
-    var _ref;
-
-    var _temp, _this, _ret;
-
     _classCallCheck(this, Layout);
 
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    var _this = _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).call(this));
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Layout.__proto__ || Object.getPrototypeOf(Layout)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+    _this.state = {
       location: 'home',
       startDate: (0, _moment2.default)(),
-      data: ''
-    }, _this.routingSystem = function () {
+      data: '',
+      cryptoAmount: 1
+    };
 
-      switch (_this.state.location) {
+    _this.routingSystem = _this.routingSystem.bind(_this);
+    _this.handleDateChange = _this.handleDateChange.bind(_this);
+    _this.apiCall = _this.apiCall.bind(_this);
+    _this.onInputChange = _this.onInputChange.bind(_this);
+    return _this;
+  }
+
+  _createClass(Layout, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+
+      var self = this;
+
+      _axios2.default.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=' + (0, _moment2.default)().unix() + '&extraParams=cryptoconverter_js').then(function (response) {
+
+        self.setState({
+          btcToday: response.data.BTC
+        }, function () {
+          console.log(self.state);
+        });
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, {
+    key: 'routingSystem',
+    value: function routingSystem() {
+
+      switch (this.state.location) {
         case 'home':
-          return _react2.default.createElement(_Home2.default, { handleDateChange: _this.handleDateChange, globalState: _this.state });
+          return _react2.default.createElement(_Home2.default, { handleDateChange: this.handleDateChange, globalState: this.state, onInputChange: this.onInputChange, apiCall: this.apiCall });
           break;
         case 'results':
           return _react2.default.createElement(_Results2.default, null);
@@ -288,30 +311,67 @@ var Layout = function (_Component) {
           return _react2.default.createElement(_Home2.default, null);
 
       }
-    }, _this.handleDateChange = function (date) {
-      _this.setState({
+    }
+  }, {
+    key: 'handleDateChange',
+    value: function handleDateChange(date) {
+      var _this2 = this;
+
+      this.setState({
         startDate: date
       }, function () {
-        return console.log(_this.state.startDate.unix());
+        return console.log(_this2.state.startDate.unix());
       });
-    }, _this.apiCall = function () {
-      //
+    }
+  }, {
+    key: 'onInputChange',
+    value: function onInputChange(e) {
+      this.setState({
+        cryptoAmount: e.target.value
+      });
+    }
+  }, {
+    key: 'apiCall',
+    value: function apiCall() {
 
-      var self = _this;
+      var self = this;
 
-      _axios2.default.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=1533182706&extraParams=cryptoconverter_js').then(function (response) {
+      _axios2.default.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym=BTC&tsyms=BTC,USD,EUR&ts=' + self.state.startDate.unix() + '&extraParams=cryptoconverter_js').then(function (response) {
+
         self.setState({
           data: response.data.BTC
         }, function () {
+
+          var costPrice = self.state.data.USD;
+
+          var newCP = self.state.cryptoAmount * 100;
+
+          newCP = newCP * costPrice / 100;
+          var sellingPrice = self.state.btcToday.USD;
+          var newSP = self.state.cryptoAmount * 100;
+          newSP = newSP * sellingPrice / 100;
+
+          if (newCP < newSP) {
+
+            var gain = newSP - newCP;
+            var gainPercentage = gain / newCP * 100;
+            gainPercentage = gainPercentage.toFixed(2);
+            console.log('profit percent is ' + gainPercentage);
+          } else {
+
+            var loss = newCP - newSP;
+            var lossPercentage = loss / newCP * 100;
+            lossPercentage = lossPercentage.toFixed(2);
+            console.log('loss percent is ' + lossPercentage);
+          }
+
           console.log(self.state);
         });
       }).catch(function (error) {
         console.log(error);
       });
-    }, _temp), _possibleConstructorReturn(_this, _ret);
-  }
-
-  _createClass(Layout, [{
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
