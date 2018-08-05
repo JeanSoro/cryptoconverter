@@ -38,7 +38,7 @@ class Results extends Component {
                 <h3>Your {newCP} dollar investment is now</h3>
                 <h1>${newSP}</h1>
                 <h4>{this.checkGains()}</h4>
-                <a href="#" className="main-btn active">Create Account to keep track of your records</a>
+                <a href="#" className="main-btn active" onClick={this.props.landingPage}>Create Account to keep track of your records</a>
                 <a href="#" className="main-btn active" onClick={this.props.landingPage}>Check another transaction</a>
               </div>
               <div className="col-md-12">

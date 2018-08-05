@@ -209,7 +209,7 @@ var Results = function (_Component) {
             ),
             _react2.default.createElement(
               'a',
-              { href: '#', className: 'main-btn active' },
+              { href: '#', className: 'main-btn active', onClick: this.props.landingPage },
               'Create Account to keep track of your records'
             ),
             _react2.default.createElement(
