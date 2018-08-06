@@ -9,6 +9,7 @@
         font-size: 2.5rem;
         text-align: center;
         margin: 2rem 0;
+        letter-spacing: 1.5px;
     }
 
     label {
@@ -17,10 +18,11 @@
         font-weight: 600;
         color: #544cb9;
         margin-bottom: 20px;  
+        letter-spacing: 1.3px;
     }
 
     button {
-        background:  #fff;
+        background: #0f0449;;
         padding: 10px 15px;
         font-size: 1.5rem;
         border: 3px solid #fff;
@@ -30,13 +32,13 @@
         font-weight: 300;
         float: right;
         cursor: pointer;
-        color: #544cb9;
+        color:  #544cb9;
         transition: all .3s ease-in-out;
 
         &:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0,0,0,.2);
-            background: #000;
+            background: #fff;
             
           }
       
